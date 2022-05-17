@@ -3,14 +3,15 @@ from conection import db
 from fastapi import FastAPI,HTTPException
 from models import Producto
 import uuid
-
+import json
+from types import SimpleNamespace
 productos= db.collection(u'productos')
 
 
 app =FastAPI()
 
 @app.get('/productos')
-async def root():
+async def obtenerProductos():
     productosRef=productos.get()
     productosJson={}
     for prod in productosRef:
@@ -18,23 +19,39 @@ async def root():
 
     return productosJson
 
+@app.get('/productos/{id}')
+async def obtenerProducto(id):
+    
+    productoRef= productos.document(id)
+    productJson=productoRef.get()
+    return productJson.to_dict()
+    
+
 @app.post('/productos')
 async def crearProducto(producto: Producto):
-    id= str(uuid.uuid1())
-    print(id)
-    producto.id=id
+    # id= str(uuid.uuid1())
+    # print(id)
+    # producto.id=id
     now=datetime.now()
     timestampAdd=datetime.timestamp(now)
     productoAdd= productos.document(f'{producto.id}').set(
         {
         'id':producto.id,
-        'tipo':producto.tipo,
-        'categoria':producto.categoria,
-        'subcategoria':producto.subcategoria,
-        'marca':producto.marca,
         'precio':producto.precio,
-        'sucursal':producto.sucursal,
-        'fechacreacion':timestampAdd,
-        'fechaactualizacion':timestampAdd,
+        'tipo':producto.tipo,
+        'stock':producto.stock
         }
     )
+    return {'status':200}
+
+
+@app.get('/productos/{sucId}/{prodId}')
+async def actualizarProducto(sucId,prodId):
+    productoRef= productos.document(prodId)
+    map(productoRef)
+    
+       
+    
+    return {'status':200}
+    
+    

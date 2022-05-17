@@ -2,12 +2,8 @@ from datetime import datetime
 from pydantic import BaseModel
 
 class Producto(BaseModel):
-    id:str
+    id:int
+    precio:int
     tipo:str
-    categoria:str
-    subcategoria:str
-    marca:str
-    precio:str
-    sucursal:str
-    fechacreacion:datetime
-    fechaactualizacion:datetime
+    stock:dict
+
